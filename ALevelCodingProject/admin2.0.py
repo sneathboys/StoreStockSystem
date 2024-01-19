@@ -12,6 +12,7 @@ class shopStockManagment:
         self.suppliers = []
         self.mainGUI()
         self.productsWork = productsClass()
+        self.salesWork = salesClass()
 
     def mainGUI(self):
         #top bar gui placment
@@ -285,9 +286,14 @@ class shopStockManagment:
 
         productTable.place(x = 0, y = 180, height=320, width=780)
 
+        self.productsWork.updateTable(productTable)
+
         scrollBar = ttk.Scrollbar(productPage, orient="vertical", command=productTable.yview)
         scrollBar.place(x = 780, y =180, width=20, height = 320)
         productTable.configure(yscrollcommand=scrollBar.set)
+        scrollBarHorizontle = ttk.Scrollbar(productPage, orient="horizontal", command=productTable.xview)
+        scrollBarHorizontle.place(x=0, y= 500, width=800, height=20)
+        productTable.configure(xscrollcommand=scrollBarHorizontle.set)
 
         submitButtonProductFunc = lambda: self.productsWork.newProduct(productNameEntry.get(), productRRPEntry.get(), productsCostEntry.get(), productQuantityEntry.get(), productTable)
         submitButtonProduct = tk.Button(productPageCollectFrame, text="Submit Product", font="Arial, 12", command=submitButtonProductFunc)
@@ -313,6 +319,27 @@ class shopStockManagment:
 
         titleSalesTextLable = tk.Label(titleSalesFrame, text="Sales Page", font="Arial, 25", background="blue", foreground="white")
         titleSalesTextLable.grid(row=0, column=2)
+
+        soldItemFrame = tk.Frame(salesPage)
+        soldItemFrame.place(x=0, y = 80, height = 300, width=800)
+
+        soldItemIDLable = tk.Label(soldItemFrame, text = "ID of Item Sold:", font="Arial, 14")
+        soldItemIDLable.grid(row=0,column=0)
+        soldItemIDEntry = tk.Entry(soldItemFrame, font="Arial, 14")
+        soldItemIDEntry.grid(row=0, column=1)
+
+        blankSpace2 = tk.Label(soldItemFrame, padx=5)
+        blankSpace2.grid(row=0, column=2)
+
+        soldItemQuantityLabel = tk.Label(soldItemFrame, font="Arial, 14",text = "Quantity of Item Sold:")
+        soldItemQuantityLabel.grid(row= 0, column=3)
+        soldItemQuantityEntry = tk.Entry(soldItemFrame, font="Arial, 14")
+        soldItemQuantityEntry.grid(row=0, column=4)
+
+        submitSoldItemButtonFunc = lambda: self.salesWork.itemSold(self.productsWork, soldItemIDEntry, soldItemQuantityEntry)
+        submitSoldItemButton = tk.Button(soldItemFrame, text="Submit", font="Arial, 14", command=submitSoldItemButtonFunc)
+        submitSoldItemButton.grid(row= 1, column=1, columnspan=3)
+
 
         salesPage.mainloop()
 
@@ -365,15 +392,65 @@ class productsClass:
                 productTable.insert(parent = '', index =x, values = (IDCheck, name, rrp, cost, quantity))
         
         return productTable
+    
+    def returnInfo(self):
+        return self.productsInfo
+    
+    def updateDict(self, newDict):
+        self.productsInfo = newDict
 
                 
 class salesClass:
     def __init__(self):
-        return
-    
+        self.profit = 0.00
+        
 
-    def itemSold(self, productsWork):
-        return
+    def itemSold(self, productsWork, soldItemIDEntry, soldItemQuantityEntry):
+        productsDictArray = productsWork.returnInfo()
+        validation = False
+        for x in range(0, len(productsDictArray)):
+            check = productsDictArray[x]
+            if str(check["ID"]) == str(soldItemIDEntry.get()):
+                try:
+                    productsDictArray[x]["quantity"] = int(check["quantity"])- int(soldItemQuantityEntry.get())
+                    validation = True
+                except:
+                    print("error")
+        if validation == True:
+            productsWork.updateDict(productsDictArray)
+            self.profitCalc(productsWork, soldItemIDEntry, soldItemQuantityEntry) 
+            validation = False
+
+
+    def profitCalc(self, productsWork, soldItemIDEntry, soldItemQuantityEntry):
+        listOfItems = productsWork.returnInfo()
+        itemID = soldItemIDEntry.get()
+        totalProfit = 0
+        for x in range(0, len(listOfItems)):
+            currentDictionary = listOfItems[x]
+            print(currentDictionary)
+            print(type(itemID), type(currentDictionary["ID"]))
+            if float(itemID) == float(currentDictionary["ID"]):
+                getRRP = currentDictionary["RRP"]
+                getCost = currentDictionary["cost"]
+                print(getCost)
+                try:
+                    getRRP = float(getRRP)
+                    getCost=float(getCost)
+                except:
+                    print("Error Not Number")
+                
+                try:
+                    multiplier = soldItemQuantityEntry.get()
+                    multiplier = float(multiplier)
+                    getRRP = getRRP * multiplier
+                    getCost = getCost * multiplier
+                    totalProfit = getRRP - getCost
+                except:
+                    print("Error")
+                
+        self.profit = self.profit + totalProfit
+
 
 
 
