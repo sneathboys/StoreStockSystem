@@ -12,6 +12,7 @@ class shopStockManagment:
         self.suppliers = []
         self.productsWork = productsClass()
         self.salesWork = salesClass()
+        self.categoryWork = categoryClass()
         self.mainGUI()
 
     def mainGUI(self):
@@ -49,7 +50,7 @@ class shopStockManagment:
         supplierButton = tk.Button(sideBarFrame, text="Supplier", font="Arial, 12", padx=65, pady=10, command=funcSuplierButton)
         supplierButton.grid(row=3, column=0)
 
-        categoryButton = tk.Button(sideBarFrame, text="Category",font="Arial, 12", padx=62, pady=10)
+        categoryButton = tk.Button(sideBarFrame, text="Category",font="Arial, 12", padx=62, pady=10, command=self.categoryWork.displayGUI)
         categoryButton.grid(row=4, column=0)
 
         funcProductsButton = lambda:self.productsButtonFunction()
@@ -350,6 +351,24 @@ class shopStockManagment:
 
 
         salesPage.mainloop()
+
+class categoryClass:
+    def __init__(self):
+        return
+    def displayGUI(self):
+        categoryScreen = tk.Toplevel()
+        categoryScreen.geometry("800x600")
+
+        categoryTitleFrame = tk.Frame(categoryScreen, background="blue")
+        categoryTitleFrame.place(x=0, y=0, width=800, height=80)
+
+        self.categoryTitleImage = tk.PhotoImage(file = 'ALevelCodingProject/Category Image.png')
+        imageDisplayLable = tk.Label(categoryTitleFrame, background="blue", image=self.categoryTitleImage)
+        imageDisplayLable.grid(row=0,column=0)
+
+
+        categoryScreen.mainloop()
+
 
 class productsClass:
     def __init__(self):
