@@ -366,6 +366,11 @@ class categoryClass:
         imageDisplayLable = tk.Label(categoryTitleFrame, background="blue", image=self.categoryTitleImage)
         imageDisplayLable.grid(row=0,column=0)
 
+        blank = tk.Lable = (categoryTitleFrame, background = 'blue', padx = 40)
+        blank.grid(row=0, column =1)
+
+        titleCategory  = tk.Lable(categoryTitleFrame, background = 'blue', text = 'Category Page', font = "Arial, 25")
+        titleCategory.grid(row = 0, column =2)
 
         categoryScreen.mainloop()
 
